@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 import time
 import torch
@@ -12,7 +12,7 @@ if __name__ == '__main__':
     data_loader = CreateDataLoader(opt)
     dataset = data_loader.load_data()
     dataset_size = len(data_loader)
-    print('#training images = %d' % dataset_size)
+    print('#training images = %d' % dataset_size, flush=True)
 
     model = create_model(opt)
     model.setup(opt)
@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
         for i, data in enumerate(dataset):
             if i % 1000 == 0:
-                print(str(i) + ' % of epoch')
+                print(str(i) + ' trained in this epoch so far', flush=True)
             iter_start_time = time.time()
             if total_steps % opt.print_freq == 0:
                 t_data = iter_start_time - iter_data_time
@@ -50,17 +50,17 @@ if __name__ == '__main__':
 
             if total_steps % opt.save_latest_freq == 0:
                 print('saving the latest model (epoch %d, total_steps %d)' %
-                      (epoch, total_steps))
+                      (epoch, total_steps), flush=True)
                 model.save_networks('latest')
 
             iter_data_time = time.time()
             torch.cuda.empty_cache()
         if epoch % opt.save_epoch_freq == 0:
             print('saving the model at the end of epoch %d, iters %d' %
-                  (epoch, total_steps))
+                  (epoch, total_steps), flush=True)
             model.save_networks('latest')
             model.save_networks(epoch)
 
         print('End of epoch %d / %d \t Time Taken: %d sec' %
-              (epoch, opt.niter + opt.niter_decay, time.time() - epoch_start_time))
+              (epoch, opt.niter + opt.niter_decay, time.time() - epoch_start_time), flush=True)
         model.update_learning_rate()
