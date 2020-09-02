@@ -627,6 +627,70 @@ class PyramidFeatures(nn.Module):
 
         return P2_x
 
+class PyramidFeatures_noSkip(nn.Module):
+    def __init__(self, C2_size, C3_size, C4_size, C5_size, fpn_weights, feature_size=128):
+        super(PyramidFeatures_noSkip, self).__init__()
+
+        self.sum_weights = fpn_weights #[1.0, 0.5, 0.5, 0.5]
+
+        # upsample C5 to get P5 from the FPN paper
+        self.P5_1 = nn.Conv2d(C5_size, feature_size, kernel_size=1, stride=1, padding=0)
+        self.P5_upsampled = nn.Upsample(scale_factor=2, mode='nearest')
+        #self.rp1 = nn.ReflectionPad2d(1)
+        #self.P5_2 = nn.Conv2d(feature_size, feature_size, kernel_size=3, stride=1, padding=0)
+
+        # add P5 elementwise to C4
+        self.P4_1 = nn.Conv2d(C4_size, feature_size, kernel_size=1, stride=1, padding=0)
+        self.P4_upsampled = nn.Upsample(scale_factor=2, mode='nearest')
+        #self.rp2 = nn.ReflectionPad2d(1)
+        #self.P4_2 = nn.Conv2d(feature_size, feature_size, kernel_size=3, stride=1, padding=0)
+
+        # add P4 elementwise to C3
+        self.P3_1 = nn.Conv2d(C3_size, feature_size, kernel_size=1, stride=1, padding=0)
+        self.P3_upsampled = nn.Upsample(scale_factor=2, mode='nearest')
+        #self.rp3 = nn.ReflectionPad2d(1)
+        #self.P3_2 = nn.Conv2d(feature_size, feature_size, kernel_size=3, stride=1, padding=0)
+
+        self.P2_1 = nn.Conv2d(C2_size, feature_size, kernel_size=1, stride=1, padding=0)
+        self.P2_upsampled = nn.Upsample(scale_factor=2, mode='nearest')
+        self.rp4 = nn.ReflectionPad2d(1)
+        self.P2_2 = nn.Conv2d(int(feature_size), int(feature_size/2), kernel_size=3, stride=1, padding=0)
+
+        #self.P1_1 = nn.Conv2d(feature_size, feature_size, kernel_size=1, stride=1, padding=0)
+        #self.P1_upsampled = nn.Upsample(scale_factor=2, mode='nearest')
+        #self.rp5 = nn.ReflectionPad2d(1)
+        #self.P1_2 = nn.Conv2d(feature_size, feature_size, kernel_size=3, stride=1, padding=0)
+
+    def forward(self, inputs):
+
+        C2, C3, C4, C5 = inputs
+
+        i = 0
+        P5_x = self.P5_1(C5) * self.sum_weights[i]
+        P5_upsampled_x = self.P5_upsampled(P5_x)
+        #P5_x = self.rp1(P5_x)
+        # #P5_x = self.P5_2(P5_x)
+        i += 1
+        P4_x = self.P4_1(C4) * self.sum_weights[i]
+        P4_x = P5_upsampled_x
+        P4_upsampled_x = self.P4_upsampled(P4_x)
+        #P4_x = self.rp2(P4_x)
+        # #P4_x = self.P4_2(P4_x)
+        i += 1
+        P3_x = self.P3_1(C3) * self.sum_weights[i]
+        P3_x = P4_upsampled_x
+        P3_upsampled_x = self.P3_upsampled(P3_x)
+        #P3_x = self.rp3(P3_x)
+        #P3_x = self.P3_2(P3_x)
+        i += 1
+        P2_x = self.P2_1(C2) * self.sum_weights[i]
+        P2_x = P3_upsampled_x
+        P2_upsampled_x = self.P2_upsampled(P2_x)
+        P2_x = self.rp4(P2_upsampled_x)
+        P2_x = self.P2_2(P2_x)
+
+        return P2_x
+
 
 class ResNet(nn.Module):
 
@@ -676,6 +740,7 @@ class ResNet(nn.Module):
             sys.exit()
 
         self.fpn = PyramidFeatures(fpn_sizes[0], fpn_sizes[1], fpn_sizes[2], fpn_sizes[3], fpn_weights)
+        # self.fpn = PyramidFeatures_noSkip(fpn_sizes[0], fpn_sizes[1], fpn_sizes[2], fpn_sizes[3], fpn_weights)
 
         #for m in self.modules():
         #    if isinstance(m, nn.Conv2d):

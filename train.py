@@ -16,7 +16,7 @@ if __name__ == '__main__':
     model.setup(opt)
     visualizer = Visualizer(opt)
     total_steps = 0
-    print(torch.cuda.memory_allocated())
+    #print(torch.cuda.memory_allocated())
 
     for epoch in range(opt.epoch_count, opt.niter + opt.niter_decay + 1):
         epoch_start_time = time.time()
@@ -24,7 +24,7 @@ if __name__ == '__main__':
         epoch_iter = 0
 
         for i, data in enumerate(dataset):
-            if i % 10 == 0:
+            if i % 1000 == 0:
                 print(str(i) + ' % of epoch')
             iter_start_time = time.time()
             if total_steps % opt.print_freq == 0:
