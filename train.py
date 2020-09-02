@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import time
 import torch
 from options.train_options import TrainOptions
