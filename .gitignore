@@ -10,6 +10,9 @@ datasets/
 .idea/
 webresult/
 results_webview/
+experiments/checkpoints
+experiments/results
+checkpoints/
 
 # Distribution / packaging
 .Python

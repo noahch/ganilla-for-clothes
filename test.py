@@ -6,8 +6,7 @@ from util.visualizer import save_images
 from util import html
 
 
-if __name__ == '__main__':
-    opt = TestOptions().parse()
+def test(opt):
     # hard-code some parameters for test
     opt.num_threads = 1   # test code only supports num_threads = 1
     opt.batch_size = 1    # test code only supports batch_size = 1
