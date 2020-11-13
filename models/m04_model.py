@@ -218,7 +218,6 @@ class M04Model(BaseModel):
 
 
         net = AblationModel1(BasicBlock_Ganilla, [2, 2, 2, 2])
-
         return init_net(net, init_type, init_gain, gpu_ids)
 
     def define_D(self, input_nc, ndf, netD,
@@ -350,7 +349,7 @@ class AblationModel1(nn.Module):
         self.layer3 = self._make_layer_ganilla(block, 32, layers[2], stride=2)
         # self.layer4 = self._make_layer_ganilla(block, 64, layers[3], stride=2)
 
-        n_downsampling = 3
+        n_downsampling = 1
 
         model = []
 
@@ -423,14 +422,16 @@ class AblationModel1(nn.Module):
         x = self.relu(x)
         x = self.pad2(x)
         x = self.maxpool(x)
+        # print("X: {}".format(x.size()))
 
         x1 = self.layer1(x)
+        # print("X1: {}".format(x1.size()))
         x2 = self.layer2(x1)
         x3 = self.layer3(x2)
         # x4 = self.layer4(x3)
-        print("X3: {}".format(x3.size()))
+        # print("X3: {}".format(x3.size()))
         out = self.deconv_part(x3)
-        print("out: {}".format(out.size()))
+        # print("out: {}".format(out.size()))
         return out
 
 

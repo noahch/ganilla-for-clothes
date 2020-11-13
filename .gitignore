@@ -6,7 +6,13 @@ __pycache__/
 # C extensions
 *.so
 
-datasets/
+datasets/10K
+datasets/ALL
+datasets/recomm
+datasets/*ACN*
+datasets/*ABG*
+datasets/*5XP*
+datasets/*626*
 .idea/
 webresult/
 results_webview/
