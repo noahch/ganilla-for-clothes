@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+datasets/1K/testA (copy)
+datasets/1K/testB (copy)
+datasets/1K/trainA
+datasets/1K/trainB
 datasets/10K
 datasets/ALL
 datasets/recomm
